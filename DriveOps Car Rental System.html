@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DriveOps Car Rental System</title>
+  <link rel="preconnect" href="https://images.unsplash.com">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#" aria-label="DriveOps home">
+        <span class="brand-mark">D</span>
+        <span>
+          <strong>DriveOps</strong>
+          <small>Car Rental System</small>
+        </span>
+      </a>
+
+      <div class="role-switch" aria-label="Role switch">
+        <button class="active" type="button" data-role-button="customer">Customer</button>
+        <button type="button" data-role-button="admin">Admin</button>
+      </div>
+
+      <nav class="nav-list" aria-label="Main navigation">
+        <button class="nav-item active" type="button" data-view="customer-dashboard">
+          <span data-icon="layout-dashboard"></span>
+          <span>Customer Home</span>
+        </button>
+        <button class="nav-item" type="button" data-view="browse-cars">
+          <span data-icon="car-front"></span>
+          <span>Available Cars</span>
+        </button>
+        <button class="nav-item" type="button" data-view="rental-history">
+          <span data-icon="history"></span>
+          <span>Rental History</span>
+        </button>
+        <button class="nav-item admin-only hidden" type="button" data-view="admin-dashboard">
+          <span data-icon="shield-check"></span>
+          <span>Admin Console</span>
+        </button>
+        <button class="nav-item admin-only hidden" type="button" data-view="manage-cars">
+          <span data-icon="wrench"></span>
+          <span>Manage Cars</span>
+        </button>
+        <button class="nav-item admin-only hidden" type="button" data-view="records">
+          <span data-icon="receipt-text"></span>
+          <span>Records</span>
+        </button>
+      </nav>
+
+      <section class="session-card" aria-label="Current session">
+        <div>
+          <small>Signed in as</small>
+          <strong id="sessionName">Guest customer</strong>
+        </div>
+        <button class="icon-button" type="button" id="logoutButton" aria-label="Log out" title="Log out">
+          <span data-icon="log-out"></span>
+        </button>
+      </section>
+    </aside>
+
+    <main class="main-panel">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow" id="pageEyebrow">Customer portal</p>
+          <h1 id="pageTitle">Find and reserve your next rental</h1>
+        </div>
+        <div class="topbar-actions">
+          <span class="status-pill ready" id="availabilitySummary">0 available</span>
+          <button class="button secondary" type="button" data-open-auth="signup">
+            <span data-icon="user-plus"></span>
+            Sign up
+          </button>
+          <button class="button primary" type="button" data-open-auth="login">
+            <span data-icon="log-in"></span>
+            Log in
+          </button>
+        </div>
+      </header>
+
+      <section class="auth-panel" id="authPanel">
+        <div>
+          <p class="eyebrow">Access</p>
+          <h2 id="authTitle">Customer sign up</h2>
+        </div>
+        <form class="auth-form" id="authForm">
+          <label>
+            Full name
+            <input type="text" id="authName" value="Jordan Customer" autocomplete="name">
+          </label>
+          <label>
+            Email
+            <input type="email" id="authEmail" value="customer@example.com" autocomplete="email">
+          </label>
+          <label>
+            Password
+            <input type="password" id="authPassword" value="password123" autocomplete="current-password">
+          </label>
+          <label>
+            Account type
+            <select id="authRole">
+              <option value="customer">Customer</option>
+              <option value="admin">Admin</option>
+            </select>
+          </label>
+          <button class="button primary" type="submit" id="authSubmit">
+            <span data-icon="badge-check"></span>
+            Create account
+          </button>
+        </form>
+      </section>
+
+      <section class="hero-strip" aria-label="Car rental overview">
+        <img src="https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=1500&q=85" alt="Cars parked in a rental pickup area">
+        <div class="hero-content">
+          <p class="eyebrow">Requirement-ready demo</p>
+          <h2>Search available cars, reserve only valid inventory, and keep rental and payment records in one place.</h2>
+          <div class="hero-metrics">
+            <span><strong id="heroAvailable">0</strong> available cars</span>
+            <span><strong id="heroRentals">0</strong> rental records</span>
+            <span><strong id="heroPayments">0</strong> payment records</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="view active" id="customer-dashboard">
+        <div class="kpi-grid">
+          <article class="metric-card">
+            <span class="metric-icon green" data-icon="car"></span>
+            <p>Available Cars</p>
+            <strong id="kpiAvailable">0</strong>
+            <small>Filtered by availability</small>
+          </article>
+          <article class="metric-card">
+            <span class="metric-icon amber" data-icon="calendar-check"></span>
+            <p>My Rentals</p>
+            <strong id="kpiMyRentals">0</strong>
+            <small>Stored rental history</small>
+          </article>
+          <article class="metric-card">
+            <span class="metric-icon blue" data-icon="credit-card"></span>
+            <p>My Payments</p>
+            <strong id="kpiMyPayments">$0</strong>
+            <small>Stored payment records</small>
+          </article>
+          <article class="metric-card">
+            <span class="metric-icon red" data-icon="ban"></span>
+            <p>Unavailable</p>
+            <strong id="kpiUnavailable">0</strong>
+            <small>Blocked from reservation</small>
+          </article>
+        </div>
+
+        <section class="content-grid">
+          <div class="work-panel span-8">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Customer workflow</p>
+                <h2>How the system behaves</h2>
+              </div>
+            </div>
+            <div class="requirement-grid">
+              <div><span data-icon="user-check"></span><strong>Sign up / log in</strong><small>Customer and admin access modes are represented.</small></div>
+              <div><span data-icon="search"></span><strong>Search and filter</strong><small>Category, year, mileage, location, and daily price filters update the catalog.</small></div>
+              <div><span data-icon="calendar-plus"></span><strong>Create reservations</strong><small>Reservation actions are disabled for unavailable cars.</small></div>
+              <div><span data-icon="database"></span><strong>Store records</strong><small>Rental and payment rows are created when a reservation is submitted.</small></div>
+            </div>
+          </div>
+
+          <aside class="work-panel span-4">
+            <div class="panel-header compact">
+              <div>
+                <p class="eyebrow">Quick action</p>
+                <h2>Reserve a car</h2>
+              </div>
+            </div>
+            <p class="panel-copy">Open the available cars view, choose a vehicle, review details, then reserve it. Unavailable cars stay visible to admins but cannot be rented by customers.</p>
+            <button class="button primary wide" type="button" data-jump="browse-cars">
+              <span data-icon="car-front"></span>
+              Browse available cars
+            </button>
+          </aside>
+        </section>
+      </section>
+
+      <section class="view" id="browse-cars">
+        <div class="work-panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Customer catalog</p>
+              <h2>Available Cars</h2>
+            </div>
+            <button class="button ghost" type="button" id="resetFilters">
+              <span data-icon="rotate-ccw"></span>
+              Reset filters
+            </button>
+          </div>
+
+          <div class="filter-grid">
+            <label>
+              Search
+              <input type="search" id="searchFilter" placeholder="Model, plate, location">
+            </label>
+            <label>
+              Category
+              <select id="categoryFilter">
+                <option value="">All categories</option>
+              </select>
+            </label>
+            <label>
+              Minimum year
+              <input type="number" id="yearFilter" min="2015" max="2026" placeholder="Any">
+            </label>
+            <label>
+              Max mileage
+              <input type="number" id="mileageFilter" min="0" placeholder="Any">
+            </label>
+            <label>
+              Location
+              <select id="locationFilter">
+                <option value="">All locations</option>
+              </select>
+            </label>
+            <label>
+              Max daily price
+              <input type="number" id="priceFilter" min="0" placeholder="Any">
+            </label>
+          </div>
+        </div>
+
+        <div class="car-layout">
+          <section class="car-grid" id="carGrid" aria-label="Cars"></section>
+          <aside class="work-panel detail-panel" id="carDetails" aria-label="Car details"></aside>
+        </div>
+      </section>
+
+      <section class="view" id="rental-history">
+        <div class="content-grid">
+          <div class="work-panel span-7">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Customer records</p>
+                <h2>My Rental History</h2>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rental</th>
+                    <th>Car</th>
+                    <th>Dates</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody id="historyRows"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="work-panel span-5">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Payment records</p>
+                <h2>My Payments</h2>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="compact-table">
+                <thead>
+                  <tr>
+                    <th>Payment</th>
+                    <th>Method</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody id="customerPaymentRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="admin-dashboard">
+        <div class="kpi-grid">
+          <article class="metric-card">
+            <span class="metric-icon green" data-icon="warehouse"></span>
+            <p>Total Fleet</p>
+            <strong id="adminFleetCount">0</strong>
+            <small>Cars in inventory</small>
+          </article>
+          <article class="metric-card">
+            <span class="metric-icon amber" data-icon="calendar-clock"></span>
+            <p>Rental Records</p>
+            <strong id="adminRentalCount">0</strong>
+            <small>Stored system records</small>
+          </article>
+          <article class="metric-card">
+            <span class="metric-icon blue" data-icon="receipt"></span>
+            <p>Payment Records</p>
+            <strong id="adminPaymentCount">0</strong>
+            <small>Stored payment rows</small>
+          </article>
+          <article class="metric-card">
+            <span class="metric-icon red" data-icon="circle-off"></span>
+            <p>Unavailable</p>
+            <strong id="adminUnavailableCount">0</strong>
+            <small>Deleted or held cars</small>
+          </article>
+        </div>
+      </section>
+
+      <section class="view" id="manage-cars">
+        <div class="content-grid">
+          <form class="work-panel span-4 car-form" id="carForm">
+            <div class="panel-header compact">
+              <div>
+                <p class="eyebrow">Admin tools</p>
+                <h2 id="carFormTitle">Add New Car</h2>
+              </div>
+            </div>
+            <input type="hidden" id="editingCarId">
+            <label>Model<input type="text" id="carModel" required></label>
+            <label>Category<input type="text" id="carCategory" required></label>
+            <label>Year<input type="number" id="carYear" min="2015" max="2026" required></label>
+            <label>Mileage<input type="number" id="carMileage" min="0" required></label>
+            <label>Location<input type="text" id="carLocation" required></label>
+            <label>Daily price<input type="number" id="carPrice" min="1" required></label>
+            <label>Status
+              <select id="carStatus">
+                <option value="available">Available</option>
+                <option value="unavailable">Unavailable</option>
+              </select>
+            </label>
+            <div class="form-actions">
+              <button class="button primary" type="submit">
+                <span data-icon="save"></span>
+                Save car
+              </button>
+              <button class="button secondary" type="button" id="clearCarForm">Clear</button>
+            </div>
+          </form>
+
+          <div class="work-panel span-8">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Inventory</p>
+                <h2>Update, Delete, or Mark Unavailable</h2>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Car</th>
+                    <th>Specs</th>
+                    <th>Location</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="adminCarRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="records">
+        <div class="content-grid">
+          <div class="work-panel span-7">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Admin records</p>
+                <h2>Customer Rental Records</h2>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rental</th>
+                    <th>Customer</th>
+                    <th>Car</th>
+                    <th>Dates</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody id="adminRentalRows"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="work-panel span-5">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Admin records</p>
+                <h2>Payment Records</h2>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="compact-table">
+                <thead>
+                  <tr>
+                    <th>Payment</th>
+                    <th>Customer</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody id="adminPaymentRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
